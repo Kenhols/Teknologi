@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teknologi-vejlederen | HTX Projekt-, Metode- og Tidsplanlægger</title>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <!-- ========================================================================
+       MODERNE TOP-HEADER MED NIVEAU-VÆLGER & 7 HOVEDSIDER
+       ======================================================================== -->
+  <header>
+    <div class="header-top">
+      <div class="brand-wrap">
+        <div class="brand-icon">⚙️</div>
+        <div class="header-title">
+          <h1>Teknologi-vejlederen (HTX)</h1>
+          <p>Interaktivt lærings-, metode- og projektværktøj (Læreplaner 2017 & Vejledninger 2024)</p>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <div class="level-selector" role="group" aria-label="Vælg fagniveau">
+          <button type="button" id="btnLevelB" class="level-btn active" onclick="setLevel('B')">Teknologi B</button>
+          <button type="button" id="btnLevelA" class="level-btn" onclick="setLevel('A')">Teknologi A</button>
+          <select id="valgtemaSelect" class="valgtema-select hidden" onchange="updateProjectMeta()" aria-label="Vælg valgtema for Teknologi A">
+            <option value="innovation">Valgtema: Teknologi & innovation</option>
+            <option value="naturvidenskab">Valgtema: Teknologi & naturvidenskab</option>
+            <option value="international">Valgtema: International teknologi</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-secondary btn-sm" onclick="toggleIterationModal(true)">🔄 Iterations-guide</button>
+        <button type="button" class="btn btn-outline-light btn-sm" onclick="exportProjectJSON()" title="Gem projektet som JSON-fil">💾 Gem fil</button>
+        <button type="button" class="btn btn-outline-light btn-sm" onclick="document.getElementById('importFile').click()" title="Indlæs JSON-fil">📂 Indlæs</button>
+        <input type="file" id="importFile" class="hidden" accept=".json" onchange="importProjectJSON(event)">
+      </div>
+    </div>
+
+    <!-- HOVEDNAVIGATION -->
+    <nav class="main-page-nav" aria-label="Hovedsider">
+      <button type="button" class="page-nav-btn active" id="navPageHome" onclick="switchPage('home')">
+        🏠 1. Intro & Teknologibegrebet
+      </button>
+      <button type="button" class="page-nav-btn" id="navPagePhases" onclick="switchPage('phases')">
+        📘 2. Faser & Teori (Venstremenu)
+      </button>
+      <button type="button" class="page-nav-btn" id="navPageIdeation" onclick="switchPage('ideation')">
+        💡 3. Problemtræ, Skydeskive & Idé-ark
+      </button>
+      <button type="button" class="page-nav-btn" id="navPageRequirements" onclick="switchPage('requirements')">
+        🎯 4. SMART-krav & PV-skema <span class="nav-badge" id="reqCountBadge">0</span>
+      </button>
+      <button type="button" class="page-nav-btn" id="navPageSources" onclick="switchPage('sources')">
+        📚 5. Kildeliste & Kildekritik <span class="nav-badge" id="sourceCountBadge">0</span>
+      </button>
+      <button type="button" class="page-nav-btn" id="navPageSchedule" onclick="switchPage('schedule')">
+        📅 6. Tidsplan <span class="nav-badge" id="selectedCountBadge">0</span>
+      </button>
+      <button type="button" class="page-nav-btn" id="navPageReport" onclick="switchPage('report')">
+        📝 7. Rapport & Overleaf
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- STATUSLINJE ØVERST -->
+    <div class="top-status-bar">
+      <div id="levelSummaryText"></div>
+      <div style="font-weight: 600; color: var(--secondary);">
+        🔄 Husk: Produktudvikling er <u>iterativ</u> – man må altid bevæge sig tilbage mellem faserne, når man gør sig nye erfaringer!
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         SIDE 1 (FORSIDE): INTRO TIL FAGET & TEKNOLOGIBEGREBETS PUSLESPIL
+         ====================================================================== -->
+    <section id="pageHome">
+      <div class="hero-banner">
+        <div>
+          <span class="badge-level" style="background:rgba(255,255,255,0.2); color:white; margin-bottom:0.5rem; display:inline-block;">HTX Profilfag • STEM & Engineering</span>
+          <h2>Velkommen til Teknologi på HTX</h2>
+          <p>
+            Faget teknologi omhandler sammenhængene mellem <strong>samfundsmæssige problemstillinger</strong> og <strong>teknologiske løsninger</strong> i et nationalt og globalt perspektiv. Gennem problembaseret læring (PBL) kombinerer I viden fra naturvidenskab, samfundsfag og kommunikation med praktisk produktudvikling i skolens værksteder og laboratorier.
+          </p>
+          <div style="display:flex; gap:0.6rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary" onclick="switchPage('phases')">🚀 Gå til Faser & Metodevalg &rarr;</button>
+            <button type="button" class="btn btn-outline-light" onclick="switchPage('ideation')">🌳 Åbn Problemtræ & Arbejdsark</button>
+          </div>
+
+          <div class="progression-steps">
+            <div class="prog-step">
+              <strong>1. Produktudvikling (GF)</strong>
+              Første møde med PBL-tankegangen og enkeltelementer af fasemodellen i grundforløbet.
+            </div>
+            <div class="prog-step">
+              <strong>2. Teknologi B & A</strong>
+              Hele fasemodellen anvendes på virkelige samfundsmæssige problemer fra analyse til prototype/produktion.
+            </div>
+            <div class="prog-step">
+              <strong>3. Teknikfag A</strong>
+              Bygger oven på teknologi med dyb teknisk specialisering inden for ét specifikt fagområde.
+            </div>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18); border-radius:12px; padding:1.25rem;">
+          <h3 style="color:#fdba74; font-size:1rem; margin-bottom:0.5rem;">🎯 Kernen i jeres teknologiprojekt</h3>
+          <ul style="padding-left:1.15rem; font-size:0.84rem; color:#f1f5f9; line-height:1.65;">
+            <li><strong>Et dokumenteret samfundsproblem:</strong> Problemet må aldrig blot være en påstand – alle årsager og virkninger i jeres problemtræ dokumenteres med kilder.</li>
+            <li><strong>AAU-model til problemformulering:</strong> Gennem problemanalysen og problemtræet udvælger I en specifik problemstilling og opstiller jeres problemformulering.</li>
+            <li><strong>Begrundede SMART-krav og valg:</strong> Alle valg fra idé til materialer skal hvile på faglige argumenter.</li>
+            <li><strong>Praktisk omhu & systematisk test:</strong> Fremstil produktet professionelt i værkstedet og test det op mod alle opstillede krav.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- INTERAKTIVT PUSLESPIL: TEKNOLOGIBEGREBET (JENS MÜLLER FIGUR 4 & FIGUR 5) -->
+      <div class="card">
+        <h3>
+          <span>🧩 Teknologibegrebet: De 4 puslespilsbrikker (Jens Müller)</span>
+          <label style="font-size:0.82rem; color:var(--accent-a); cursor:pointer; display:flex; align-items:center; gap:0.4rem;">
+            <input type="checkbox" id="toggleExtendedPuzzle" onchange="renderExtendedPuzzleToggle()">
+            Vis Den udvidede puslespilsmodel med 12 samfundsbrikker (Teknologi A - Figur 5)
+          </label>
+        </h3>
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+          I teknologifaget defineres teknologi som <em>et middel, mennesket anvender til at forbedre sine livsbetingelser</em>. Teknologien består af fire uadskillelige puslespilsbrikker: <strong>Viden, Organisation, Teknik og Produkt</strong> (Figur 4 i vejledningen). Ændrer man én brik, påvirker det straks de tre andre! <strong>Klik på en brik herunder for at se, hvordan I bruger den i jeres rapport:</strong>
+        </p>
+
+        <div class="puzzle-showcase">
+          <div class="puzzle-svg-wrap">
+            <svg viewBox="0 0 360 360" width="310" height="310" aria-label="Teknologibegrebets fire puslespilsbrikker">
+              <!-- BRIK 1: VIDEN -->
+              <g class="puzzle-piece-group active-piece" id="piece_viden" onclick="selectPuzzlePiece('viden')">
+                <path d="M 30,30 L 180,30 L 180,82 C 204,82 204,118 180,118 L 180,180 L 128,180 C 128,156 92,156 92,180 L 30,180 Z"
+                      fill="#dbeafe" stroke="#2563eb" stroke-width="2.5"/>
+                <text x="102" y="102" text-anchor="middle" font-size="20" font-weight="800" fill="#1e40af">VIDEN</text>
+                <text x="102" y="124" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">Kunnen, indsigt</text>
+                <text x="102" y="139" text-anchor="middle" font-size="11" font-weight="600" fill="#1e3a8a">&amp; intuition</text>
+              </g>
+
+              <!-- BRIK 2: ORGANISATION -->
+              <g class="puzzle-piece-group" id="piece_organisation" onclick="selectPuzzlePiece('organisation')">
+                <path d="M 180,30 L 330,30 L 330,180 L 278,180 C 278,204 242,204 242,180 L 180,180 L 180,118 C 204,118 204,82 180,82 Z"
+                      fill="#ede9fe" stroke="#7c3aed" stroke-width="2.5"/>
+                <text x="258" y="96" text-anchor="middle" font-size="17" font-weight="800" fill="#5b21b6">ORGANI-</text>
+                <text x="258" y="116" text-anchor="middle" font-size="17" font-weight="800" fill="#5b21b6">SATION</text>
+                <text x="258" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#4c1d95">Ledelse &amp; proces</text>
+              </g>
+
+              <!-- BRIK 3: TEKNIK -->
+              <g class="puzzle-piece-group" id="piece_teknik" onclick="selectPuzzlePiece('teknik')">
+                <path d="M 30,180 L 92,180 C 92,156 128,156 128,180 L 180,180 L 180,242 C 156,242 156,278 180,278 L 180,330 L 30,330 Z"
+                      fill="#ccfbf1" stroke="#0d9488" stroke-width="2.5"/>
+                <text x="102" y="252" text-anchor="middle" font-size="20" font-weight="800" fill="#115e59">TEKNIK</text>
+                <text x="102" y="274" text-anchor="middle" font-size="11" font-weight="600" fill="#134e4a">Maskiner, råvarer</text>
+                <text x="102" y="289" text-anchor="middle" font-size="11" font-weight="600" fill="#134e4a">&amp; arbejdskraft</text>
+              </g>
+
+              <!-- BRIK 4: PRODUKT -->
+              <g class="puzzle-piece-group" id="piece_produkt" onclick="selectPuzzlePiece('produkt')">
+                <path d="M 180,180 L 242,180 C 242,204 278,204 278,180 L 330,180 L 330,330 L 180,330 L 180,278 C 156,278 156,242 180,242 Z"
+                      fill="#ffedd5" stroke="#ea580c" stroke-width="2.5"/>
+                <text x="258" y="252" text-anchor="middle" font-size="19" font-weight="800" fill="#9a3412">PRODUKT</text>
+                <text x="258" y="274" text-anchor="middle" font-size="11" font-weight="600" fill="#7c2d12">Det færdige resultat</text>
+                <text x="258" y="289" text-anchor="middle" font-size="11" font-weight="600" fill="#7c2d12">&amp; egenskaber</text>
+              </g>
+            </svg>
+
+            <!-- Udvidet puslespilsramme (Figur 5 - 12 samfundsbrikker for Teknologi A) -->
+            <div id="extendedPuzzleRing" class="extended-ring-grid hidden">
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Social infrastruktur</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Sociale normer</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Arbejdsmarked</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Samf. arbejdsdeling</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Human ressourcer</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Organisationskultur</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Økologiske betingelser</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Internationale relationer</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Økonomisk infrastr.</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Statslig regulering</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Markedsbetingelser</div>
+              <div class="ext-brick" onclick="selectPuzzlePiece('ext_samfund')">Levevilkår</div>
+            </div>
+          </div>
+
+          <div id="puzzleDetailCard" class="theory-box" style="margin:0; padding:1.35rem; border-left-width:5px;"></div>
+        </div>
+      </div>
+
+      <!-- OVERBLIK OVER FORSKELLEN PÅ TEKNOLOGI B OG TEKNOLOGI A -->
+      <div class="workspace-split">
+        <div class="card" style="border-top: 4px solid var(--primary-accent);">
+          <h3>📘 Teknologi B – Fokus & Rammer</h3>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:0.65rem;">
+            I Teknologi B arbejdes med systematisk og iterativ produktudvikling gennem de 6 faser fra samfundsmæssigt problem til færdig prototype i værkstedet og evaluering:
+          </p>
+          <ul style="padding-left:1.2rem; font-size:0.85rem; line-height:1.7;">
+            <li><strong>6 faser + Evaluering:</strong> Problemet &rarr; Problemanalyse &rarr; Produktprincip &rarr; Produktudformning &rarr; Produktionsforberedelse &rarr; Realisering &rarr; Evaluering.</li>
+            <li><strong>Produktionsforberedelse:</strong> Planlægning af jeres egen fremstillingsproces struktureret efter Teknologibegrebet (Teknik, Viden, Organisation, Produkt) + flowdiagram.</li>
+            <li><strong>Realisering:</strong> Fremstilling af jeres prototype/procesforløb med omhu i skolens værksted/laboratorium.</li>
+            <li><strong>Afsluttende projekt:</strong> Centralt udmeldt tema, ca. 45 timer over ca. 6 uger, <strong>godkendt og underskrevet projektbeskrivelse</strong> (bilag), rapport 15-30 sider for 1 elev (+5 sider pr. ekstra elev).</li>
+          </ul>
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--accent-a);">
+          <h3 style="color:var(--accent-a);">🔮 Teknologi A – Fokus & Rammer</h3>
+          <p style="font-size:0.86rem; color:var(--text-muted); margin-bottom:0.65rem;">
+            I Teknologi A integreres virksomhedens 3 afdelinger (<strong>Salg/Markedsføring, Konstruktion og Produktion</strong>, jf. Figur 3) i alle faser:
+          </p>
+          <ul style="padding-left:1.2rem; font-size:0.85rem; line-height:1.7;">
+            <li><strong>Ekstra i Produktprincip & Udformning:</strong> Modelbygning, produktions-, montage- og distributionsrigtig konstruktion, markeds-/prisovervejelser samt <em>fremstilling af prototype under Produktudformning</em>.</li>
+            <li><strong>Ekstra i Produktionsforberedelse:</strong> Produktionsformer (enkeltstyk, serie, masse), planlægning (Gantt/MRP/JIT), produktionslayout, kvalitets- og miljøledelse (ISO 9001/14001), omkostningsberegning og markedsføring.</li>
+            <li><strong>Realisering & Evaluering:</strong> Gennemførelse <em>eller</em> dokumentation af selve produktionen, endelig prisberegning + <strong>ét Valgtema</strong>.</li>
+            <li><strong>Afsluttende projekt:</strong> Ca. 70 timer, rapport 15-30 sider for 1 elev (+5-15 sider pr. ekstra elev).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SIDE 2: VENSTRE NAVIGATIONS-SIDEBAR MED FARVEKODEDE DROPDOWNS + TEORI
+         ====================================================================== -->
+    <section id="pagePhases" class="hidden">
+      <div class="sidebar-layout">
+        <aside class="left-nav-sidebar" aria-label="Faser og underemner">
+          <div class="sidebar-section-title">
+            <span>Faser (Klik på pil ▶/▼ for ud/ind)</span>
+            <button type="button" class="btn btn-outline btn-sm" style="padding:0.15rem 0.45rem; font-size:0.7rem;" id="btnToggleAllAcc" onclick="expandAllAccordions()">Fold alle ud</button>
+          </div>
+          <div id="sidebarSeqAccordions"></div>
+
+          <div class="sidebar-section-title" style="margin-top:0.9rem;">
+            <span>Løbende tværgående spor</span>
+          </div>
+          <div id="sidebarCrossAccordions"></div>
+        </aside>
+
+        <div>
+          <div class="mini-ipu-bar no-print">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.45rem; font-size:0.78rem; color:var(--text-muted);">
+              <span><strong>Produktudviklingsmodellen (Farvekodet efter fase):</strong> Klik på en fase her eller i venstremenuen</span>
+              <label id="ipuToggleWrap" class="hidden" style="color: var(--accent-a); font-weight:700; cursor: pointer;">
+                <input type="checkbox" id="showIpuDepts" checked onchange="renderMainTheoryPanel()">
+                Vis IPU-afdelinger (Salg, Konstruktion, Produktion)
+              </label>
+            </div>
+            <div class="mini-ipu-row" id="miniIpuRow"></div>
+          </div>
+
+          <div class="card" id="mainTheoryPanel"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SIDE 3: ENKELT PROBLEMTRÆ (AAU), SKYDESKIVEMODEL & IDÉGENERERINGS-ARK
+         ====================================================================== -->
+    <section id="pageIdeation" class="hidden">
+      <!-- DEL 0: FORENKLET AAU-PROBLEMTRÆ (ÅRSAG / VIRKNING + KILDE) -->
+      <div class="card" style="border-top: 4px solid #d97706;">
+        <h3>
+          <span>🌳 AAU-model: Problemtræ (Årsag/Virkning + Kilde) &rarr; Problemformulering</span>
+          <button type="button" class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨️ Print Problemtræ</button>
+        </h3>
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 0.9rem;">
+          Efter <strong>AAU-modellen</strong> bruger I <em>Problemanalysen</em> til at opbygge jeres <strong>problemtræ</strong> med <strong>årsager (rødder)</strong> og <strong>virkninger/konsekvenser (krone)</strong>. For hver kasse i problemtræet angiver I blot selve årsagen/virkningen og hvilke <strong>kilder</strong> (statistik, artikler, rapporter eller egne undersøgelser), der dokumenterer den. Derefter udvælger I den årsag, der danner jeres <strong>problemformulering</strong>.
+        </p>
+
+        <!-- Enkel formular med kun 3 felter: Type, Årsag/virkning og Kilde(r) -->
+        <div class="no-print" style="background:#f8fafc; padding:1rem; border-radius:8px; border:1px solid var(--border); margin-bottom:1.1rem;">
+          <h4 style="font-size:0.9rem; color:#b45309; margin-bottom:0.65rem;">➕ Tilføj kasse til Problemtræet</h4>
+          <div class="setup-grid">
+            <div class="form-group">
+              <label for="ptNodeType">1. Placering i Problemtræet</label>
+              <select id="ptNodeType">
+                <option value="effect">🌿 Krone: Virkning / Konsekvens</option>
+                <option value="core">🪵 Stamme: Kerneproblemet</option>
+                <option value="cause" selected>🌱 Rod: Årsag til problemet</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="ptStatement">2. Beskriv årsag, kerneproblem eller virkning</label>
+              <input type="text" id="ptStatement" placeholder="Fx: Cyklister overses fra siden i mørke ved højresving...">
+            </div>
+            <div class="form-group">
+              <label for="ptSource">3. Kilde / Kilder der dokumenterer kassen</label>
+              <input type="text" id="ptSource" list="ptSourceSuggestions" placeholder="Fx: Vejdirektoratet (2024), Danmarks Statistik...">
+              <datalist id="ptSourceSuggestions"></datalist>
+            </div>
+            <div class="form-group" style="justify-content:flex-end;">
+              <button type="button" class="btn btn-secondary" onclick="addProblemTreeNode()">+ Tilføj kasse</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visuelt Problemtræ: Krone -> Stamme -> Rødder -->
+        <div class="ptree-zone zone-effect">
+          <div class="ptree-zone-header" style="color:#b45309;">
+            <span>🌿 KRONEN: Virkninger & Konsekvenser (med kildehenvisning)</span>
+          </div>
+          <div id="ptreeEffectsGrid" class="ptree-cards-grid"></div>
+        </div>
+
+        <div style="text-align:center; font-size:1.1rem; font-weight:800; color:#d97706; margin: -0.35rem 0 0.45rem 0;">⬆ Fører til ⬆</div>
+
+        <div class="ptree-zone zone-core">
+          <div class="ptree-zone-header" style="color:#9a3412;">
+            <span>🪵 STAMMEN: Kerneproblemet (med kildehenvisning)</span>
+          </div>
+          <div id="ptreeCoreGrid" class="ptree-cards-grid"></div>
+        </div>
+
+        <div style="text-align:center; font-size:1.1rem; font-weight:800; color:#0d9488; margin: -0.35rem 0 0.45rem 0;">⬆ Skyldes ⬆</div>
+
+        <div class="ptree-zone zone-cause">
+          <div class="ptree-zone-header" style="color:#115e59;">
+            <span>🌱 RØDDERNE: Årsager (Klik på "🎯 Udvælg" på den årsag, I vil løse i jeres projekt)</span>
+          </div>
+          <div id="ptreeCausesGrid" class="ptree-cards-grid"></div>
+        </div>
+
+        <!-- AAU-model: Afgrænset problemstilling og endelig Problemformulering -->
+        <div style="background:#fff7ed; border:2px solid #ea580c; border-radius:8px; padding:1rem; margin-top:1rem;">
+          <h4 style="color:#9a3412; margin-bottom:0.35rem;">🎯 Udvalgt problemstilling & Problemformulering (efter AAU-modellen)</h4>
+          <p style="font-size:0.82rem; color:var(--text-muted); margin-bottom:0.6rem;">
+            På baggrund af den udvalgte gren i problemtræet formulerer I her jeres endelige <strong>problemformulering</strong>, som afslutter problemanalysen:
+          </p>
+          <div class="form-group">
+            <label for="aauProblemFormulation" style="color:#9a3412; font-weight:700;">Vores Problemformulering:</label>
+            <textarea id="aauProblemFormulation" rows="2"
+              placeholder="Fx: Hvordan kan vi udvikle et produkt til [målgruppe], der angriber årsagen [udvalgt årsag fra problemtræet], så [virkning/konsekvens] reduceres?"
+              oninput="updateAauProblemFormulation()"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEL 1: SKYDESKIVEMODEL TIL KONKURRENTANALYSEN -->
+      <div class="card">
+        <h3>
+          <span>🎯 Skydeskivemodel til Konkurrentanalysen (Fase 2: Produktprincip)</span>
+          <button type="button" class="btn btn-outline btn-sm no-print" onclick="addSampleCompetitors()">+ Indsæt eksempel-konkurrenter</button>
+        </h3>
+        <p style="font-size: 0.86rem; color: var(--text-muted);">
+          I <em>Produktprincip</em> skal I analysere eksisterende produkter (pris, materialer, funktion, fordele og ulemper). Med <strong>Skydeskivemodellen</strong> inddeler I konkurrenterne i 3 zoner alt efter, hvor tæt de ligger på jeres problemstilling. Når I tilføjer en konkurrent herunder, plottes den automatisk ind på skydeskiven!
+        </p>
+
+        <div class="bullseye-layout">
+          <div class="bullseye-svg-box">
+            <svg id="bullseyeSvg" viewBox="0 0 320 320" width="290" height="290" aria-label="Skydeskivemodel for konkurrenter"></svg>
+            <div style="display:flex; justify-content:center; gap:0.75rem; flex-wrap:wrap; font-size:0.74rem; margin-top:0.4rem;">
+              <span><strong style="color:#dc2626;">● Inderst:</strong> Direkte konkurrenter</span>
+              <span><strong style="color:#d97706;">● Midten:</strong> Substitutionsprodukter</span>
+              <span><strong style="color:#2563eb;">● Yderst:</strong> Alternativ løsning</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="no-print" style="background:#f8fafc; padding:1rem; border-radius:8px; border:1px solid var(--border); margin-bottom:1rem;">
+              <h4 style="font-size:0.9rem; color:var(--primary-accent); margin-bottom:0.65rem;">➕ Tilføj konkurrerende produkt til skydeskiven</h4>
+              <div class="setup-grid">
+                <div class="form-group">
+                  <label for="compName">Produktnavn / Producent</label>
+                  <input type="text" id="compName" placeholder="Fx: Hövding / Standard LED-lygte...">
+                </div>
+                <div class="form-group">
+                  <label for="compRing">Placering på skydeskiven (Zone)</label>
+                  <select id="compRing">
+                    <option value="1">🎯 Inderste ring: Direkte konkurrent (Samme funktion & målgruppe)</option>
+                    <option value="2">⭕ Mellemste ring: Indirekte / Substitutionsprodukt (Andet princip)</option>
+                    <option value="3">🔵 Yderste ring: Alternativ problemløsning / Perifer konkurrent</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="compPriceMat">Pris & Materialer / Teknik</label>
+                  <input type="text" id="compPriceMat" placeholder="Fx: 249 kr. – Sprøjtestøbt ABS, Li-ion batteri...">
+                </div>
+              </div>
+              <div class="setup-grid" style="margin-top:0.65rem;">
+                <div class="form-group">
+                  <label for="compPros">Fordele (Hvad gør produktet godt?)</label>
+                  <input type="text" id="compPros" placeholder="Fx: Lav vægt, vandtæt (IP65), nem montering...">
+                </div>
+                <div class="form-group">
+                  <label for="compCons">Ulemper (Hvorfor løser det ikke vores problem fuldt ud?)</label>
+                  <input type="text" id="compCons" placeholder="Fx: Kun synlig bagfra (0° fra siden), ryster løs...">
+                </div>
+                <div class="form-group" style="justify-content:flex-end;">
+                  <button type="button" class="btn btn-secondary" onclick="addCompetitor()">+ Plot på skydeskive</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:7%;">Nr.</th>
+                    <th style="width:18%;">Produkt</th>
+                    <th style="width:18%;">Zone på skydeskive</th>
+                    <th style="width:18%;">Pris & Materialer</th>
+                    <th style="width:16%;">Fordele</th>
+                    <th style="width:16%;">Ulemper</th>
+                    <th class="no-print" style="width:7%;">Slet</th>
+                  </tr>
+                </thead>
+                <tbody id="competitorsTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DEL 2: DIGITALE ARBEJDSARK TIL DE FORSKELLIGE IDÉGENERERINGSMETODER -->
+      <div class="card">
+        <h3>
+          <span>💡 Digitale Arbejdsark til Idégenerering (Fase 2: Produktprincip)</span>
+          <button type="button" class="btn btn-outline btn-sm no-print" onclick="window.print()">🖨️ Print aktivt arbejdsark</button>
+        </h3>
+        <p style="font-size: 0.86rem; color: var(--text-muted); margin-bottom: 0.9rem;">
+          Jf. vejledningens afsnit 2.2.3 skal I anvende systematiske metoder til idéudvikling før udvælgelsen i PV-skemaet. Vælg et arbejdsark herunder og udfyld det sammen i gruppen:
+        </p>
+
+        <div class="ideation-subtabs no-print">
+          <button type="button" class="ideation-tab-btn active" id="btnSheetMorph" onclick="switchIdeationSheet('morph')">
+            🧩 1. Morfologisk Skema (Delproblemer)
+          </button>
+          <button type="button" class="ideation-tab-btn" id="btnSheetHats" onclick="switchIdeationSheet('hats')">
+            🎩 2. De Bonos 6 Tænkehatte
+          </button>
+          <button type="button" class="ideation-tab-btn" id="btnSheetReverse" onclick="switchIdeationSheet('reverse')">
+            🔄 3. Omvendt Brainstorm
+          </button>
+          <button type="button" class="ideation-tab-btn" id="btnSheetCis" onclick="switchIdeationSheet('cis')">
+            🌀 4. Cirkelmetode & CIS-ark
+          </button>
+        </div>
+
+        <!-- ARBEJDSARK 1: MORFOLOGISK SKEMA -->
+        <div id="sheetMorph">
+          <div class="theory-box" style="margin-top:0;">
+            <h4>Sådan bruges det morfologiske skema:</h4>
+            <p>Opdel jeres produkt i <strong>3-5 delfunktioner/delproblemer</strong> (rækkerne). Find derefter 3 forskellige tekniske delløsninger til hver delfunktion (kolonnerne). Kombinér så på kryds og tværs til 3 samlede helhedsidéer, som kan sendes direkte videre til jeres PV-skema!</p>
+          </div>
+          <div class="table-responsive" style="margin-top:0.8rem;">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:25%;">Delproblem / Delfunktion</th>
+                  <th style="width:25%;">Delløsning A</th>
+                  <th style="width:25%;">Delløsning B</th>
+                  <th style="width:25%;">Delløsning C</th>
+                </tr>
+              </thead>
+              <tbody id="morphTableBody"></tbody>
+            </table>
+          </div>
+          <div class="no-print" style="margin-top:0.65rem; display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="addMorphRow()">+ Tilføj ekstra delfunktion-række</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="switchPage('requirements')">Send idéer videre til PV-skema (Side 4) &rarr;</button>
+          </div>
+        </div>
+
+        <!-- ARBEJDSARK 2: DE BONOS 6 TÆNKEHATTE -->
+        <div id="sheetHats" class="hidden">
+          <div class="theory-box" style="margin-top:0;">
+            <h4>Sådan bruges De Bonos 6 Tænkehatte i idéudviklingen:</h4>
+            <p>Alle i gruppen tager den samme farve hat på ad gangen, så I belyser jeres produktidéer fra alle vinkler i stedet for at diskutere i øst og vest.</p>
+          </div>
+          <div class="hats-grid" id="hatsGridContainer"></div>
+        </div>
+
+        <!-- ARBEJDSARK 3: OMVENDT BRAINSTORM -->
+        <div id="sheetReverse" class="hidden">
+          <div class="theory-box" style="margin-top:0;">
+            <h4>Sådan bruges Omvendt Brainstorm:</h4>
+            <p>Når det er svært at finde på nye idéer, er det ofte meget nemmere at tænke negativt først! Spørg: <strong>"Hvordan kan vi gøre problemet endnu værre eller få produktet til at fejle totalt?"</strong> – og vend derefter hvert udsagn 180 grader rundt til en konkret løsningsidé.</p>
+          </div>
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th style="width:32%;">1. Negativ brainstorm: Hvordan forværrer vi problemet?</th>
+                  <th style="width:34%;">2. Omvending (180°): Hvad er det modsatte?</th>
+                  <th style="width:34%;">3. Konkret teknisk produktidé heraf</th>
+                </tr>
+              </thead>
+              <tbody id="reverseTableBody"></tbody>
+            </table>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm no-print" style="margin-top:0.65rem;" onclick="addReverseRow()">+ Tilføj række</button>
+        </div>
+
+        <!-- ARBEJDSARK 4: CIRKELMETODE & CIS -->
+        <div id="sheetCis" class="hidden">
+          <div class="theory-box" style="margin-top:0;">
+            <h4>Sådan bruges Cirkelmetoden / CIS (Creative Idea Solution):</h4>
+            <p>Her tvinger I hjernen væk fra standardløsninger ved at tage udgangspunkt i <strong>rolleperspektivskifte</strong> (hvordan ville en helt anden branche/person løse det?) og <strong>tilfældige associationsord</strong>.</p>
+          </div>
+          <div class="setup-grid" id="cisFieldsContainer"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SIDE 4: INTERESSENTER, SMART-KRAVSPECIFIKATION & PV-SKEMA
+         ====================================================================== -->
+    <section id="pageRequirements" class="hidden">
+      <div class="card">
+        <h3>🧵 Den Røde Tråd: Fra Udvalgt Årsag &rarr; SMART-krav &rarr; Test</h3>
+        <div class="red-thread-grid">
+          <div class="red-thread-step" style="border-left-color:#d97706;">
+            <label for="rtCause" style="color:#b45309;">1. Hovedårsag vi angriber (Fra Problemtræet)</label>
+            <input type="text" id="rtCause" placeholder="Fx: Bilister overser cyklister ved højresving i mørke..." oninput="updateRedThread()">
+          </div>
+          <div class="red-thread-step" style="border-left-color:#2563eb;">
+            <label for="rtReq" style="color:#1d4ed8;">2. Vigtigste SMART-krav (Fra Produktprincip)</label>
+            <input type="text" id="rtReq" placeholder="Fx: Lysstyrke > 80 lumen synlig i 180° vinkel..." oninput="updateRedThread()">
+          </div>
+          <div class="red-thread-step" style="border-left-color:#be123c;">
+            <label for="rtTest" style="color:#be123c;">3. Hvordan testes det? (I Evaluering)</label>
+            <input type="text" id="rtTest" placeholder="Fx: Lux-måling i mørklagt lokale på 5, 10 og 25 m afstand..." oninput="updateRedThread()">
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <span>👥 Trin 1: Interessenter & Behov (Hvem stiller krav til løsningen?)</span>
+          <button type="button" class="btn btn-outline btn-sm no-print" onclick="addDefaultStakeholders()">+ Indsæt typiske interessenter</button>
+        </h3>
+        <div class="setup-grid no-print" style="background:#f8fafc; padding:0.9rem; border-radius:8px; border:1px solid var(--border); margin-bottom:1rem;">
+          <div class="form-group">
+            <label for="shGroup">Interessent / Gruppe</label>
+            <input type="text" id="shGroup" placeholder="Fx slutbruger, montør, myndighed, miljø...">
+          </div>
+          <div class="form-group">
+            <label for="shCategory">Kilde i Produktprincip</label>
+            <select id="shCategory">
+              <option value="Brugsundersøgelse (Bruger)">Brugsundersøgelse (Slutbruger / Kunde)</option>
+              <option value="Problemanalyse (Samfund/Miljø)">Problemanalyse (Samfund / Miljø / Eksperter)</option>
+              <option value="Myndighedskrav & Standarder">Myndighedskrav, Lovgivning & Sikkerhed</option>
+              <option value="Konkurrentanalyse (Marked)">Konkurrentanalyse / Marked & Pris</option>
+              <option value="Produktion & Værksted">Produktion, Montage & Værksted</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="shNeed">Hvilket behov eller problem har gruppen?</label>
+            <input type="text" id="shNeed" placeholder="Fx: Skal kunne betjene produktet med én hånd i regnvejr...">
+          </div>
+          <div class="form-group" style="justify-content:flex-end;">
+            <button type="button" class="btn" onclick="addStakeholder()">+ Tilføj gruppe</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:22%;">Interessent / Gruppe</th>
+                <th style="width:23%;">Kilde i rapporten</th>
+                <th style="width:45%;">Konkret behov / Interesse i løsningen</th>
+                <th class="no-print" style="width:10%;">Handling</th>
+              </tr>
+            </thead>
+            <tbody id="stakeholdersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>📏 Trin 2: Opstil, begrund og vægt krav med SMART-modellen</h3>
+        <div class="smart-pills">
+          <div class="smart-pill"><strong>S – Specifikt</strong> Hvad gælder kravet præcist for?</div>
+          <div class="smart-pill"><strong>M – Målbart</strong> Konkrete tal, grænser og enheder (fx N, mm, °C, kr., sek.).</div>
+          <div class="smart-pill"><strong>A – Attraktivt / Begrundet</strong> Udspringer af en interessents behov eller problemanalysen.</div>
+          <div class="smart-pill"><strong>R – Realistisk</strong> Muligt at fremstille og måle inden for skolens rammer.</div>
+          <div class="smart-pill"><strong>T – Testbart / Tidsbestemt</strong> Plan for hvordan kravet testes i Evalueringsfasen.</div>
+        </div>
+
+        <div class="no-print" style="background:#f8fafc; padding:1rem; border-radius:8px; border:1px solid var(--border); margin: 0.9rem 0;">
+          <div class="setup-grid">
+            <div class="form-group">
+              <label for="reqTitle">Kravets overskrift / Parameter</label>
+              <input type="text" id="reqTitle" placeholder="Fx: Maksimal vægt / Batteritid / Brudstyrke...">
+            </div>
+            <div class="form-group">
+              <label for="reqStakeholder">Hvem har dette krav? (Interessent / Kilde)</label>
+              <select id="reqStakeholder"></select>
+            </div>
+            <div class="form-group">
+              <label for="reqType">Kravtype (Hårdt eller Blødt)</label>
+              <select id="reqType" onchange="toggleWeightInput()">
+                <option value="hard">Hårdt krav (Skal-krav – frasorterer idéer)</option>
+                <option value="soft" selected>Blødt krav (Kan-/ønskekrav – vægtes 1-5)</option>
+              </select>
+            </div>
+            <div class="form-group" id="reqWeightWrap">
+              <label for="reqWeight">Vægtning (1 = lav, 5 = afgørende)</label>
+              <select id="reqWeight">
+                <option value="1">1 - Lav vægt</option>
+                <option value="2">2 - Under middel</option>
+                <option value="3" selected>3 - Middel vægt</option>
+                <option value="4">4 - Høj vægt</option>
+                <option value="5">5 - Afgørende vægt</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setup-grid" style="margin-top:0.75rem;">
+            <div class="form-group">
+              <label for="reqSmartText">Konkret og målbart krav (S + M)</label>
+              <input type="text" id="reqSmartText" placeholder="Fx: Produktet må maksimalt veje 1,2 kg inkl. batteri...">
+            </div>
+            <div class="form-group">
+              <label for="reqJustification">Faglig begrundelse for kravet og vægtningen (A + Kilde/Belæg)</label>
+              <input type="text" id="reqJustification" placeholder="Fx: Brugeren bærer udstyret i 3 timer dagligt (jf. interview)...">
+            </div>
+            <div class="form-group">
+              <label for="reqTestMethod">Plan for test i Evalueringsfasen (R + T)</label>
+              <input type="text" id="reqTestMethod" placeholder="Fx: Kontrolvejning af prototype på digitalvægt (usikkerhed ±1 g)...">
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-top:0.85rem;">
+            <div class="smart-checklist">
+              <span style="color:var(--primary-accent); font-weight:700;">SMART-tjek:</span>
+              <label><input type="checkbox" id="chkS" checked> <strong>S</strong>pecifikt</label>
+              <label><input type="checkbox" id="chkM" checked> <strong>M</strong>ålbart</label>
+              <label><input type="checkbox" id="chkA" checked> <strong>A</strong>ttraktivt (Begrundet)</label>
+              <label><input type="checkbox" id="chkR" checked> <strong>R</strong>ealistisk</label>
+              <label><input type="checkbox" id="chkT" checked> <strong>T</strong>estbart</label>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addRequirement()">+ Gem SMART-krav</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:6%;">Nr.</th>
+                <th style="width:14%;">Interessent / Kilde</th>
+                <th style="width:12%;">Type & Vægt</th>
+                <th style="width:22%;">SMART-krav (Specifikt & Målbart)</th>
+                <th style="width:22%;">Begrundelse for krav & vægt</th>
+                <th style="width:16%;">Hvordan testes kravet?</th>
+                <th class="no-print" style="width:8%;">Slet</th>
+              </tr>
+            </thead>
+            <tbody id="requirementsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <span>⚖️ Trin 3: Kravmatrix / PV-skema (Sortering og begrundet valg af løsning)</span>
+          <div class="inline-input-group no-print">
+            <input type="text" id="newIdeaInput" placeholder="Navn på idé (fx Idé 1)..." onkeydown="if(event.key==='Enter') addIdea()">
+            <button type="button" class="btn btn-sm" onclick="addIdea()">+ Tilføj idé</button>
+          </div>
+        </h3>
+        <div class="table-responsive">
+          <table id="pvMatrixTable"></table>
+        </div>
+        <div class="form-group" style="margin-top: 1rem;">
+          <label for="pvArgumentation" style="color:var(--primary-accent); font-size:0.88rem;">
+            📝 Faglig argumentation for pointtildeling og valg af løsning (Krav i vejledningen: Et skema må aldrig stå alene uden tekstlig begrundelse!)
+          </label>
+          <textarea id="pvArgumentation" rows="3"
+            placeholder="Begrund her hvorfor idéerne har fået de givne point på de vigtigste krav, og hvorfor vinder-idéen vælges..."
+            oninput="updatePvArgumentation()"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SIDE 5: KILDELISTE, SYSTEMATISK SØGNING & KILDEKRITIK
+         ====================================================================== -->
+    <section id="pageSources" class="hidden">
+      <div class="card">
+        <h3>🔍 Trin 1: Systematisk informationssøgning (Søgeord & Fagdatabaser)</h3>
+        <div class="smart-pills">
+          <div class="smart-pill"><strong>📚 Bibliotek.dk & Infomedia</strong>Fagbøger, tidsskrifter og avisartikler.</div>
+          <div class="smart-pill"><strong>📊 Danmarks Statistik</strong>Officielle tal til at dokumentere problemets omfang.</div>
+          <div class="smart-pill"><strong>🌿 Miljøstyrelsen</strong>Rapporter om miljøeffekter, plastik, kemikalier og LCA.</div>
+          <div class="smart-pill"><strong>🦺 Arbejdstilsynet</strong>Regler og grænseværdier for arbejdsmiljø og sikkerhed.</div>
+          <div class="smart-pill"><strong>📐 DS / ISO Standarder</strong>Tekniske standarder, CE-mærkning og lovgivning.</div>
+        </div>
+        <div class="form-group" style="margin-top:0.75rem;">
+          <label for="searchLogInput">Jeres søgeprotokol (Søgeord med AND/OR og anvendte databaser):</label>
+          <textarea id="searchLogInput" rows="2" placeholder="Fx: Søgestreng: ('cykelulykker' OR 'højresvingsulykker') AND 'mørke' i Danmarks Statistik og Vejdirektoratet..." oninput="updateSearchLog()"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>🛡️ Trin 2: Tilføj kilde og lav Kildekritik</h3>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.85rem;">
+          Alle kilder, I tilføjer her, kan vælges direkte som kildehenvisning på kasserne i jeres <strong>Problemtræ</strong> på Side 3!
+        </p>
+        <div class="no-print" style="background:#f8fafc; padding:1rem; border-radius:8px; border:1px solid var(--border); margin-bottom:1rem;">
+          <div class="setup-grid">
+            <div class="form-group">
+              <label for="srcAuthor">Forfatter / Organisation (Afsender)</label>
+              <input type="text" id="srcAuthor" placeholder="Fx: Vejdirektoratet / DTU / Teknologisk Institut...">
+            </div>
+            <div class="form-group">
+              <label for="srcYear">Udgivelsesår / Dato</label>
+              <input type="text" id="srcYear" placeholder="Fx: 2024">
+            </div>
+            <div class="form-group">
+              <label for="srcTitle">Kildens titel</label>
+              <input type="text" id="srcTitle" placeholder="Fx: Ulykkesanalyse for cyklister i byzoner...">
+            </div>
+            <div class="form-group">
+              <label for="srcType">Kildetype / Dokumenttype</label>
+              <select id="srcType">
+                <option value="Myndighedsrapport / Statistik">Myndighedsrapport / Officiel statistik</option>
+                <option value="Videnskabelig artikel / Forskningsrapport">Videnskabelig artikel / Forskningsrapport</option>
+                <option value="Fagbog / Lærebog / Branchekatalog">Fagbog / Lærebog / Branchekatalog</option>
+                <option value="Lovgivning / Standard (DS/ISO/CE)">Lovgivning / Standard (DS/ISO/CE)</option>
+                <option value="Interesseorganisation / NGO">Interesseorganisation / NGO</option>
+                <option value="Kommerciel hjemmeside / Producent">Kommerciel hjemmeside / Producent (Konkurrent)</option>
+                <option value="Avisartikel / Nyhedsmedie (Infomedia)">Avisartikel / Nyhedsmedie (Infomedia)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setup-grid" style="margin-top:0.75rem;">
+            <div class="form-group">
+              <label for="srcPhase">Hvilken fase bruges kilden primært i?</label>
+              <select id="srcPhase">
+                <option value="problemanalyse">Fase 1: Problemanalyse & Problemtræ</option>
+                <option value="produktprincip">Fase 2: Produktprincip (Konkurrenter, brugere, lovkrav)</option>
+                <option value="produktudformning">Fase 3: Produktudformning (Materialer, beregninger, miljø)</option>
+                <option value="produktionsforberedelse">Fase 4: Produktionsforberedelse (Produktion, økonomi)</option>
+                <option value="evaluering">Fase 6: Evaluering (Test, samfundssamspil)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="srcUrl">URL / Link eller ISBN</label>
+              <input type="text" id="srcUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+              <label for="srcReliability">Vurdering af troværdighed</label>
+              <select id="srcReliability">
+                <option value="Høj troværdighed" selected>🟢 Høj troværdighed (Objektiv, fagfællebedømt / officiel data)</option>
+                <option value="Middel troværdighed">🟡 Middel troværdighed (Relevant, men tjek afsenderens interesse)</option>
+                <option value="Lav / Partisk (Kræver forbehold)">🟠 Lav / Partisk (Fx salgsside – bruges kun med forbehold)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setup-grid" style="margin-top:0.75rem;">
+            <div class="form-group">
+              <label for="srcClaim">Hvad dokumenterer kilden i rapporten? (Fx hvilken årsag/virkning i problemtræet)</label>
+              <input type="text" id="srcClaim" placeholder="Fx: Dokumenterer at 62 % af ulykkerne skyldes manglende synlighed fra siden...">
+            </div>
+            <div class="form-group">
+              <label for="srcCritique">Kildekritisk vurdering (Afsenderens ekspertise, objektivitet, aktualitet og dokumentation)</label>
+              <input type="text" id="srcCritique" placeholder="Fx: Offentlig myndighedsrapport baseret på politidata 2019-2024; ingen kommerciel bias...">
+            </div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; margin-top:0.85rem;">
+            <div class="smart-checklist">
+              <span style="color:var(--primary-accent); font-weight:700;">Kildekritisk tjek:</span>
+              <label><input type="checkbox" id="chkSrcAuth" checked> <strong>A</strong>fsender & Ekspertise</label>
+              <label><input type="checkbox" id="chkSrcObj" checked> <strong>O</strong>bjektivitet / Interesse</label>
+              <label><input type="checkbox" id="chkSrcAkt" checked> <strong>A</strong>ktualitet</label>
+              <label><input type="checkbox" id="chkSrcDok" checked> <strong>D</strong>okumentationsgrad</label>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addSource()">+ Tilføj til Kildeliste</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:6%;">Ref.</th>
+                <th style="width:22%;">Kilde (Forfatter, År, Titel, Type)</th>
+                <th style="width:14%;">Fase & Troværdighed</th>
+                <th style="width:25%;">Hvad dokumenterer kilden?</th>
+                <th style="width:25%;">Kildekritisk vurdering</th>
+                <th class="no-print" style="width:8%;">Slet</th>
+              </tr>
+            </thead>
+            <tbody id="sourcesTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SIDE 6: SEPARAT SIDE TIL GENERERING AF TIDSPLAN & PROJEKTRAMMER
+         ====================================================================== -->
+    <section id="pageSchedule" class="hidden">
+      <div class="card">
+        <h3>
+          <span>⚙️ Trin 1: Indtast projektets rammer (Datoer, Timer, Gruppestørrelse & Værksteder)</span>
+          <button type="button" class="btn btn-outline btn-sm no-print" onclick="resetProject()">🗑️ Nulstil alt</button>
+        </h3>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+          Tidsplanen planlægges <strong>baglæns fra jeres afleveringsdato</strong>. Husk at afsætte god tid til værkstedsarbejde (Realisering/Prototype) samt buffer-tid til iterationer. Gruppemedlemmerne herunder opretter også automatisk underskriftsfelter på jeres projektbeskrivelse.
+        </p>
+
+        <div class="setup-grid">
+          <div class="form-group">
+            <label for="projectTitle">Projekttitel / Emne</label>
+            <input type="text" id="projectTitle" placeholder="Fx Plastaffald i havet / Sikker cykeltrafik..." oninput="updateProjectMeta()">
+          </div>
+
+          <div class="form-group">
+            <label for="startDate">Startdato for projekt</label>
+            <input type="date" id="startDate" onchange="updateProjectMeta()">
+          </div>
+
+          <div class="form-group">
+            <label for="endDate">Afleveringsdato (Planlæg baglæns herfra)</label>
+            <input type="date" id="endDate" onchange="updateProjectMeta()">
+          </div>
+
+          <div class="form-group">
+            <label for="totalHours">Samlet undervisningstid (timer)</label>
+            <input type="number" id="totalHours" min="5" max="200" value="45" onchange="updateProjectMeta()">
+            <small style="font-size:0.74rem; color:var(--text-muted);">Afsluttende projekt: ca. 45 t. (B) / ca. 70 t. (A)</small>
+          </div>
+
+          <div class="form-group">
+            <label for="newMemberInput">Gruppemedlemmer (til sidetal, tovholder & underskrifter)</label>
+            <div class="inline-input-group no-print">
+              <input type="text" id="newMemberInput" placeholder="Navn på elev..." onkeydown="if(event.key==='Enter') addMember()">
+              <button type="button" class="btn btn-sm" onclick="addMember()">+ Tilføj</button>
+            </div>
+            <div id="memberTags" class="tag-list"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="newWorkshopInput">Værksteder & Laboratorier til rådighed</label>
+            <div class="inline-input-group no-print">
+              <input type="text" id="newWorkshopInput" placeholder="Fx 3D-print, Arduino, Træ, Kemi..." onkeydown="if(event.key==='Enter') addWorkshop()">
+              <button type="button" class="btn btn-sm" onclick="addWorkshop()">+ Tilføj</button>
+            </div>
+            <div id="workshopTags" class="tag-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>
+          <div>
+            <span>📅 Trin 2: Generér og tilpas jeres farvekodede Tidsplan</span>
+            <p style="font-size: 0.82rem; font-weight: normal; color: var(--text-muted); margin-top: 0.2rem;">
+              Bemærk: Den automatiske fordeling af tid og datoer er et <strong>vejledende FORSLAG</strong>, som gruppen selv skal justere efter jeres værkstedstider.
+            </p>
+          </div>
+          <div class="no-print" style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary" onclick="autoDistributeSchedule()">
+              ⚡ Generér tidsplan (baglæns fra aflevering)
+            </button>
+            <button type="button" class="btn btn-outline" onclick="window.print()">
+              🖨️ Print / Gem som PDF
+            </button>
+          </div>
+        </h3>
+
+        <div style="background: #f8fafc; padding: 0.85rem; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 1rem;">
+          <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; font-size:0.88rem; font-weight:600;">
+            <span id="scheduleDateSpan">Periode: Ikke angivet</span>
+            <span id="scheduleHoursSummary">Planlagte timer: 0 / 45 t.</span>
+          </div>
+          <div class="gantt-bar-wrap" id="scheduleVisualBar" title="Visuel fordeling af timer pr. fase"></div>
+          <div id="scheduleLegend" style="display:flex; gap:0.8rem; flex-wrap:wrap; font-size:0.76rem; color:var(--text-muted);"></div>
+        </div>
+
+        <div class="table-responsive">
+          <table id="scheduleTable">
+            <thead>
+              <tr>
+                <th style="width: 15%;">Fase</th>
+                <th style="width: 25%;">Valgt underemne / Aktivitet</th>
+                <th style="width: 9%;">Timer</th>
+                <th style="width: 13%;">Startdato</th>
+                <th style="width: 13%;">Deadline / Milepæl</th>
+                <th style="width: 13%;">Værksted / Ressource</th>
+                <th style="width: 12%;">Tovholder*</th>
+              </tr>
+            </thead>
+            <tbody id="scheduleTableBody"></tbody>
+          </table>
+        </div>
+
+        <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.8rem;">
+          *<strong>Vigtigt fra vejledningens afsnit 3.2.1:</strong> Til intern projektstyring i hverdagen er det en god idé at udpege tovholdere. Husk dog, at ved det afsluttende eksamensprojekt har alle elever i projektgruppen <em>fælles ansvar</em> for det afleverede, så i den endelige eksamensrapport skal der ikke gøres rede for den enkelte elevs ansvar.
+        </p>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         SIDE 7: RAPPORTDISPOSITION, PROJEKTBESKRIVELSE MED UNDERSKRIFTER (B) & OVERLEAF
+         ====================================================================== -->
+    <section id="pageReport" class="hidden">
+      <div class="card" id="bProjectDescCard">
+        <h3>
+          <span>✍️ Projektbeskrivelse til godkendelse (Krav ved Teknologi B afsluttende projekt)</span>
+          <div class="no-print" style="display:flex; gap:0.4rem;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="switchPage('schedule')">👤 Ret gruppemedlemmer</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="window.print()">🖨️ Print til underskrift</button>
+          </div>
+        </h3>
+        <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 0.85rem;">
+          Ved eksamensprojektet på Teknologi B skal projektbeskrivelsen godkendes og underskrives før start og vedlægges rapporten som bilag (jf. afsnit 3.2.1). Der genereres automatisk et underskriftsfelt til hvert gruppemedlem herunder.
+        </p>
+        <div class="setup-grid">
+          <div class="form-group">
+            <label for="pbProblem">1. Beskrivelse af problemet, dets årsager og virkninger</label>
+            <textarea id="pbProblem" rows="3" placeholder="Kort beskrivelse af det samfundsmæssige problem, dets årsager og konsekvenser..." oninput="updatePbFields()"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="pbProduct">2. Forslag til produkt samt valg af værksted/laboratorium</label>
+            <textarea id="pbProduct" rows="3" placeholder="Foreløbig idé til produkt og hvilke værksteder/laboratorier det kræver..." oninput="updatePbFields()"></textarea>
+          </div>
+        </div>
+
+        <!-- Dynamiske underskriftsfelter for samtlige gruppemedlemmer + vejleder -->
+        <div id="pbSignatureContainer" class="signature-grid"></div>
+      </div>
+
+      <div class="workspace-split">
+        <div class="card">
+          <h3>
+            <span>📝 Genereret Rapportdisposition (Farvekodet)</span>
+            <div class="no-print" style="display:flex; gap:0.4rem;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="openLatexModal()">📄 LaTeX-kode til Overleaf</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="window.print()">🖨️ Print</button>
+            </div>
+          </h3>
+          <div id="reportOutlineContainer"></div>
+        </div>
+
+        <div class="card">
+          <h3>🎯 Bedømmelseskriterier & Eksamenstjek</h3>
+          <div id="examCriteriaContainer"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- MODAL 1: ITERATIONS-HJÆLPER -->
+  <div id="iterationModal" class="modal-backdrop hidden" onclick="if(event.target===this) toggleIterationModal(false)">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <h3 style="color:var(--secondary);">🔄 Iterations-guide: Sådan dokumenterer I tilbageløb positivt</h3>
+        <button type="button" class="btn btn-outline btn-sm" onclick="toggleIterationModal(false)">Luk ✕</button>
+      </div>
+      <p style="font-size:0.9rem; margin-bottom:0.8rem;">
+        Produktudviklingsmodellen er <strong>iterativ</strong> (jf. Kolbs læringscirkel i vejledningen). Det trækker <em>op</em> i bedømmelsen, når I viser, at I reflekterer over ny viden eller fejl i tests og går et skridt tilbage for at forbedre jeres projekt!
+      </p>
+      <div class="theory-box">
+        <h4>3 klassiske iterationer i et teknologiprojekt:</h4>
+        <ul style="padding-left:1.2rem; margin-top:0.35rem;">
+          <li><strong>Fra Problemanalyse &rarr; tilbage til Problemet:</strong> Jeres kilder og problemtræ viser en mere præcis årsag end først antaget. I opstiller en skarpere problemformulering.</li>
+          <li><strong>Fra Produktudformning &rarr; tilbage til Produktprincip:</strong> Beregninger eller materialevalg viser, at et krav i kravspecifikationen må præciseres.</li>
+          <li><strong>Fra Realisering/Evaluering &rarr; tilbage til Produktudformning:</strong> En deltest i værkstedet viser en svaghed ved prototypen. I opdaterer arbejdstegningen/koden og dokumenterer forbedringen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: LATEX / OVERLEAF EKSPORT -->
+  <div id="latexModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeLatexModal()">
+    <div class="modal-content">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+        <h3 style="color:var(--primary-accent);">📄 LaTeX-skabelon til Overleaf</h3>
+        <div style="display:flex; gap:0.5rem;">
+          <button type="button" class="btn btn-success btn-sm" onclick="copyLatexCode()">📋 Kopiér LaTeX-kode</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="closeLatexModal()">Luk ✕</button>
+        </div>
+      </div>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.75rem;">
+        Indsæt koden i <code>main.tex</code> i Overleaf. Den indeholder jeres valgte underemner som afsnit, jeres Problemtræ (årsager/virkninger med kilder), jeres konkurrentanalyse, jeres SMART-kravspecifikation samt kildelisten.
+      </p>
+      <textarea id="latexCodeOutput" rows="16" style="width:100%; font-family:monospace; font-size:0.8rem; padding:0.75rem; border:1px solid var(--border); border-radius:6px; background:#0f172a; color:#f8fafc;" readonly></textarea>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT: FAGDATA (ADSKILT FRA LOGIK) + APPLIKATIONSLOGIK
+       ========================================================================== -->
+    <script src="data.js"></script>
+  <script src="app.js"></script>
+
+</body>
+</html>
